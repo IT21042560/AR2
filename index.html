@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | Aphids</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes">
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+
+      #unity-canvas {
+        width: 100vw;
+        height: 100vh;
+        background: #231F20;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="unity-canvas"></canvas>
+    <script src="Build/testar.loader.js"></script>
+    <script>
+      // Request camera permission for AR functionality
+      async function requestCameraPermission() {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          stream.getTracks().forEach(track => track.stop());
+          console.log("Camera access granted");
+        } catch (error) {
+          console.error("Camera access denied:", error);
+          alert("Please enable camera access for AR functionality.");
+        }
+      }
+
+      // Call the function to request camera permission
+      requestCameraPermission();
+
+      // Adjust canvas size and style for mobile devices
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        var canvas = document.querySelector("#unity-canvas");
+        canvas.style.width = "100%";
+        canvas.style.height = "100%";
+        canvas.style.position = "fixed";
+      }
+
+      // Initialize Unity instance
+      createUnityInstance(document.querySelector("#unity-canvas"), {
+        dataUrl: "Build/testar.data",
+        frameworkUrl: "Build/testar.framework.js",
+        codeUrl: "Build/testar.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "DefaultCompany",
+        productName: "Aphids",
+        productVersion: "0.1",
+      }).then((unityInstance) => {
+        console.log("Unity Instance created successfully");
+      }).catch((message) => {
+        console.error(message);
+        alert("Failed to load the AR environment.");
+      });
+    </script>
+  </body>
+</html>
